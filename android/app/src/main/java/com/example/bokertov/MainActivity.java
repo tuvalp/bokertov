@@ -19,6 +19,10 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.KeyguardManager;
+import android.content.Context;
+import android.os.PowerManager;
+
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
@@ -43,6 +47,11 @@ public class MainActivity extends FlutterActivity {
         FlutterEngineCache.getInstance().put("bokertov_engine", flutterEngine);
 
         checkAndRequestPermissions();
+
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("unlockFromNotification", false)) {
+            unlockScreen();
+        }
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler(
@@ -69,9 +78,12 @@ public class MainActivity extends FlutterActivity {
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
+        Intent intent = getIntent();
+        String message = intent.getStringExtra("message");
+
         new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(),
                 CHANNEL)
-                .invokeMethod("onAlarmTriggered", null);
+                .invokeMethod("onAlarmTriggered", message);
     };
 
     private void scheduleAlarm(int delay, String message) {
@@ -158,6 +170,31 @@ public class MainActivity extends FlutterActivity {
                 // You might want to show a message to the user or take some other action
             }
         }
+    }
+
+    private void unlockScreen() {
+        // Acquire a wake lock to ensure that the device stays awake during this
+        // operation
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
+                PowerManager.FULL_WAKE_LOCK |
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                        PowerManager.ON_AFTER_RELEASE,
+                "MyApp:UnlockScreen");
+
+        wakeLock.acquire();
+
+        // Unlock the screen using KeyguardManager
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("Unlock");
+        keyguardLock.disableKeyguard();
+
+        // Release the wake lock
+        wakeLock.release();
     }
 
 }

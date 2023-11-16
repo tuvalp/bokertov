@@ -44,15 +44,16 @@ class AlarmBoxService {
         var alarm = alarmBox.getAt(index);
         if (alarm != null && alarm.isActive == true) {
           var milliseconds = getMillisecondsToAlarm(DateTime.now(), alarm.time);
-          timeList.add(milliseconds);
+          timeList
+              .add({"time": milliseconds, "id": alarm.id, "note": alarm.note});
         }
       }
 
-      timeList.sort();
+      timeList.sort((a, b) => a['time'].compareTo(b['time']));
 
       if (timeList.isNotEmpty) {
         try {
-          scheduleAlarm(timeList[0], "Wake up!");
+          scheduleAlarm(timeList[0]["time"], timeList[0]["note"]);
         } catch (e) {
           print("Error scheduling alarm: $e");
         }

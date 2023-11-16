@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
@@ -14,9 +15,18 @@ class AlarmRingScreen extends StatefulWidget {
 }
 
 class _AlarmRingScreenState extends State<AlarmRingScreen> {
+  static const MethodChannel channel = MethodChannel('com.example.bokertov');
+  late String message = "";
+
   @override
   void initState() {
     ringtonePlay();
+    channel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'onAlarmTriggered') {
+        message = call.arguments ?? "";
+        print('Received alarm message: $message');
+      }
+    });
     super.initState();
   }
 
@@ -67,6 +77,15 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
                     style: const TextStyle(
                         fontSize: 96, fontWeight: FontWeight.w200),
                   ),
+                  message != ""
+                      ? Text(
+                          message,
+                          style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w100),
+                        )
+                      : Container(),
                 ],
               ),
             ),

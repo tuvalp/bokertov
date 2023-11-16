@@ -2,22 +2,28 @@ package com.example.bokertov;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-import android.app.KeyguardManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
+import android.app.KeyguardManager;
 import android.view.WindowManager;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import androidx.core.app.NotificationCompat;
+
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
 import io.flutter.embedding.engine.dart.DartExecutor;
+
+import io.flutter.plugin.common.MethodChannel;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -25,13 +31,17 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         FlutterEngine flutterEngine = new FlutterEngine(context);
         flutterEngine.getDartExecutor().executeDartEntrypoint(
-                DartExecutor.DartEntrypoint.createDefault());
+                DartExecutor.DartEntrypoint.createDefault()
+
+        );
         if ("com.example.bokertov.ALARM_TRIGGERED".equals(intent.getAction())) {
 
             flutterEngine.getNavigationChannel().setInitialRoute("/alarm-ring");
             FlutterEngineCache.getInstance().put("bokertov_engine", flutterEngine);
 
             Log.d("AlarmReceiver", "Alarm Received from Receiver");
+
+            String message = intent.getStringExtra("message");
 
             Intent launchIntent = new Intent(context, MainActivity.class);
 
@@ -72,9 +82,13 @@ public class AlarmReceiver extends BroadcastReceiver {
                 // Release the wake lock
                 wakeLock.release();
 
+                // Send the message to the Flutter side using the method channel
+                new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "com.example.bokertov")
+                        .invokeMethod("onAlarmTriggered", message);
+
                 if (isScreenLocked) {
                     // Screen is locked, show notification
-                    showUnlockNotification(context);
+                    showUnlockNotification(context, message);
                 }
             } else {
                 Log.d("AlarmReceiver", "Launch Intent is null");
@@ -82,7 +96,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private void showUnlockNotification(Context context) {
+    private void showUnlockNotification(Context context, String message) {
         // Create a notification channel with high importance
         NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name",
                 NotificationManager.IMPORTANCE_HIGH);
@@ -93,23 +107,38 @@ public class AlarmReceiver extends BroadcastReceiver {
         notificationManager.createNotificationChannel(channel);
 
         // Prepare notification content intent to unlock the screen
-        Intent unlockIntent = new Intent(context, MainActivity.class); // Change to the appropriate activity
+        Intent unlockIntent = new Intent(context, MainActivity.class);
+        unlockIntent.setAction("com.example.bokertov.ALARM_TRIGGERED");
+        unlockIntent.putExtra("message", message);
+        unlockIntent.putExtra("unlockFromNotification", true);
+
+        // Change to the appropriate activity
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
                 0,
                 unlockIntent,
-                PendingIntent.FLAG_IMMUTABLE); // Use FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE);
+
+        if (message == null) {
+            message = "Your alarm is on!";
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentTime = dateFormat.format(calendar.getTime());
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "channel_id")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Unlock Screen")
-                .setContentText("Tap to unlock the screen")
+                .setSmallIcon(R.drawable.ic_notifction)
+                .setContentTitle("Alarm  " + currentTime) // Add the current time to the title
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true)
+                .setSound(null) // Set the sound to null to turn it off
                 .setContentIntent(contentIntent);
 
         // Show the notification
         notificationManager.notify(123, mBuilder.build());
     }
+
 }
