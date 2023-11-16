@@ -9,9 +9,13 @@ import Flutter
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         methodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: controller.binaryMessenger)
+        print("IOS onCreate!!!");
+
+
 
         methodChannel?.setMethodCallHandler({ [weak self] (call, result) in
             if call.method == "scheduleAlarm" {
+                print("scheduleAlarm");
                 if let arguments = call.arguments as? [String: Any],
                    let delay = arguments["delay"] as? Int,
                    let message = arguments["message"] as? String {

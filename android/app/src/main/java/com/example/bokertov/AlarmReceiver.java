@@ -2,7 +2,8 @@ package com.example.bokertov;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-import android.app.Notification;
+import android.app.KeyguardManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -10,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
-import android.app.KeyguardManager;
 import android.view.WindowManager;
 
 import androidx.core.app.NotificationCompat;
@@ -19,17 +19,13 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
 import io.flutter.embedding.engine.dart.DartExecutor;
 
-import io.flutter.plugin.common.MethodChannel;
-
 public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         FlutterEngine flutterEngine = new FlutterEngine(context);
         flutterEngine.getDartExecutor().executeDartEntrypoint(
-                DartExecutor.DartEntrypoint.createDefault()
-
-        );
+                DartExecutor.DartEntrypoint.createDefault());
         if ("com.example.bokertov.ALARM_TRIGGERED".equals(intent.getAction())) {
 
             flutterEngine.getNavigationChannel().setInitialRoute("/alarm-ring");
@@ -87,6 +83,15 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private void showUnlockNotification(Context context) {
+        // Create a notification channel with high importance
+        NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name",
+                NotificationManager.IMPORTANCE_HIGH);
+
+        // Get the NotificationManager and create the channel
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.createNotificationChannel(channel);
+
         // Prepare notification content intent to unlock the screen
         Intent unlockIntent = new Intent(context, MainActivity.class); // Change to the appropriate activity
         PendingIntent contentIntent = PendingIntent.getActivity(
@@ -105,9 +110,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentIntent(contentIntent);
 
         // Show the notification
-        NotificationManager mNotificationManager = (NotificationManager) context
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(123, mBuilder.build());
+        notificationManager.notify(123, mBuilder.build());
     }
-
 }
