@@ -2,6 +2,9 @@ package com.example.bokertov;
 
 import static android.view.WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +12,8 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.app.KeyguardManager;
 import android.view.WindowManager;
-import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
@@ -34,7 +35,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             flutterEngine.getNavigationChannel().setInitialRoute("/alarm-ring");
             FlutterEngineCache.getInstance().put("bokertov_engine", flutterEngine);
 
-            Log.d("AlarmReceiver", "Alarm Received from Reciver");
+            Log.d("AlarmReceiver", "Alarm Received from Receiver");
 
             Intent launchIntent = new Intent(context, MainActivity.class);
 
@@ -54,37 +55,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                 KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                 boolean isScreenLocked = keyguardManager.inKeyguardRestrictedInputMode();
 
-                // Prepare notification title and subtitle
-                String title = "Your Alarm";
-                String subtitle = "Alarm is on!";
-
-                if (!isScreenLocked) {
-                    // Screen is not locked, get time and custom message
-                    long currentTime = System.currentTimeMillis();
-                    title = String.format("Alarm at %tI:%<tM %<tp", currentTime);
-
-                    String customMessage = intent.getStringExtra("message");
-                    subtitle = (customMessage != null) ? customMessage : "Alarm is on!";
-                }
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(title)
-                        .setContentText(subtitle)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // Set visibility for lock screen
-                        .setAutoCancel(true);
-
-                // Show the notification
-                NotificationManagerCompat.from(context).notify(123, builder.build());
-
-                // Start the activity
+                // Screen is not locked, successfully unlocked
                 context.startActivity(launchIntent);
                 Log.d("AlarmReceiver", "App launched");
 
                 // Acquire a wake lock to ensure that the device stays awake during this
                 // operation
-
                 PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                 PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
                         PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
@@ -93,18 +69,45 @@ public class AlarmReceiver extends BroadcastReceiver {
                 wakeLock.acquire();
 
                 // Unlock the screen
-                // KeyguardManager keyguardManager = (KeyguardManager)
-                // context.getSystemService(Context.KEYGUARD_SERVICE);
+                keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                 KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("Unlock");
                 keyguardLock.disableKeyguard();
 
                 // Release the wake lock
                 wakeLock.release();
+
+                if (isScreenLocked) {
+                    // Screen is locked, show notification
+                    showUnlockNotification(context);
+                }
             } else {
                 Log.d("AlarmReceiver", "Launch Intent is null");
             }
         }
+    }
 
+    private void showUnlockNotification(Context context) {
+        // Prepare notification content intent to unlock the screen
+        Intent unlockIntent = new Intent(context, MainActivity.class); // Change to the appropriate activity
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context,
+                0,
+                unlockIntent,
+                PendingIntent.FLAG_IMMUTABLE); // Use FLAG_IMMUTABLE
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "channel_id")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Unlock Screen")
+                .setContentText("Tap to unlock the screen")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent);
+
+        // Show the notification
+        NotificationManager mNotificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(123, mBuilder.build());
     }
 
 }
