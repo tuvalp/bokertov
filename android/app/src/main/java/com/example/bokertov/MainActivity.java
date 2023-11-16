@@ -83,7 +83,7 @@ public class MainActivity extends FlutterActivity {
 
         new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(),
                 CHANNEL)
-                .invokeMethod("onAlarmTriggered", message);
+                .invokeMethod("onAlarmTriggered", "Handler Message");
     };
 
     private void scheduleAlarm(int delay, String message) {

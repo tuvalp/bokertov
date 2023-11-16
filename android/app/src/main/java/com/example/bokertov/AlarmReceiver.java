@@ -84,7 +84,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 // Send the message to the Flutter side using the method channel
                 new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "com.example.bokertov")
-                        .invokeMethod("onAlarmTriggered", message);
+                        .invokeMethod("onAlarmTriggered", "Rciver Message");
 
                 if (isScreenLocked) {
                     // Screen is locked, show notification

@@ -39,28 +39,37 @@ import Flutter
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    private func scheduleAlarm(delay: Int, message: String) {
-        // Schedule local notification
-        let content = UNMutableNotificationContent()
-        content.title = "Alarm"
-        content.body = message
+private func scheduleAlarm(delay: Int, message: String) {
+    // Schedule local notification
+    let content = UNMutableNotificationContent()
+    content.title = "Alarm"
+    content.body = message
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(delay), repeats: false)
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+    // Create a unique identifier for the notification
+    let identifier = UUID().uuidString
 
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
-            } else {
-                print("Notification scheduled successfully with message: \(message)")
-            }
+    // Set up the trigger for the notification
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(delay), repeats: false)
+
+    // Create the notification request
+    let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+
+    // Add the request to the notification center
+    UNUserNotificationCenter.current().add(request) { (error) in
+        if let error = error {
+            print("Error scheduling notification: \(error.localizedDescription)")
+        } else {
+            print("Notification scheduled successfully with message: \(message)")
         }
-
-        print("Alarm scheduled with delay: \(delay) seconds and message: \(message)")
-
-        // Schedule background task to launch the app
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
     }
+
+    // Log the scheduled alarm
+    print("Alarm scheduled with delay: \(delay) seconds and message: \(message)")
+
+    // Schedule background task to launch the app
+    UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
+}
+
 
     private func cancelAllAlarms() {
         // Cancel all scheduled notifications

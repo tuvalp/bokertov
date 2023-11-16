@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 
 import '../services/alarm_box.dart';
 
+const MethodChannel channel = MethodChannel('com.example.bokertov');
+
 class AlarmRingScreen extends StatefulWidget {
   const AlarmRingScreen({super.key});
 
@@ -15,7 +17,6 @@ class AlarmRingScreen extends StatefulWidget {
 }
 
 class _AlarmRingScreenState extends State<AlarmRingScreen> {
-  static const MethodChannel channel = MethodChannel('com.example.bokertov');
   late String message = "";
 
   @override
@@ -23,7 +24,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
     ringtonePlay();
     channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'onAlarmTriggered') {
-        message = call.arguments ?? "";
+        message = call.arguments.toString() ?? "";
         print('Received alarm message: $message');
       }
     });
