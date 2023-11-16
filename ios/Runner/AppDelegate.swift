@@ -44,6 +44,9 @@ import Flutter
     }
 
 
+        print("Alarm scheduled with delay: \(delay) seconds and message: \(message)")
+
+
         // Schedule background task to launch the app
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
     }
@@ -66,5 +69,7 @@ import Flutter
         // Unlocking the screen programmatically is not possible in iOS due to security restrictions.
         // You can launch the app and navigate to a specific route using Flutter method channel.
         methodChannel?.invokeMethod("onAlarmTriggered", arguments: nil)
+        print("Unlock screen and launch app method triggered")
+
     }
 }

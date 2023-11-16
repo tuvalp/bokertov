@@ -11,6 +11,9 @@ import android.app.KeyguardManager;
 import android.view.WindowManager;
 import android.os.Build;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
 import io.flutter.embedding.engine.dart.DartExecutor;
@@ -47,6 +50,34 @@ public class AlarmReceiver extends BroadcastReceiver {
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
+                // Check if the screen is locked
+                KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                boolean isScreenLocked = keyguardManager.inKeyguardRestrictedInputMode();
+
+                // Prepare notification title and subtitle
+                String title = "Your Alarm";
+                String subtitle = "Alarm is on!";
+
+                if (!isScreenLocked) {
+                    // Screen is not locked, get time and custom message
+                    long currentTime = System.currentTimeMillis();
+                    title = String.format("Alarm at %tI:%<tM %<tp", currentTime);
+
+                    String customMessage = intent.getStringExtra("message");
+                    subtitle = (customMessage != null) ? customMessage : "Alarm is on!";
+                }
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText(subtitle)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // Set visibility for lock screen
+                        .setAutoCancel(true);
+
+                // Show the notification
+                NotificationManagerCompat.from(context).notify(123, builder.build());
+
                 // Start the activity
                 context.startActivity(launchIntent);
                 Log.d("AlarmReceiver", "App launched");
@@ -62,7 +93,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 wakeLock.acquire();
 
                 // Unlock the screen
-                KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                // KeyguardManager keyguardManager = (KeyguardManager)
+                // context.getSystemService(Context.KEYGUARD_SERVICE);
                 KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("Unlock");
                 keyguardLock.disableKeyguard();
 
