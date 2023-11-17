@@ -49,7 +49,7 @@ private func scheduleAlarm(delay: Int, message: String) {
     let identifier = UUID().uuidString
 
     // Set up the trigger for the notification
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(delay), repeats: false)
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(delay / 1000), repeats: false)
 
     // Create the notification request
     let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
