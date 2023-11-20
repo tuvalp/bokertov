@@ -81,6 +81,7 @@ private func scheduleAlarm(delay: Int, message: String) {
 
     override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // Handle background fetch, unlock the screen, and launch the app
+        print("Unlock screen and launch app method triggered")
         unlockScreenAndLaunchApp()
         completionHandler(.newData)
     }
