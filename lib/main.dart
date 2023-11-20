@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:get/get.dart';
 
 // Screens
@@ -21,6 +23,22 @@ Future<void> alarmLaunchMethod(MethodCall call) async {
   }
 }
 
+Future<void> requestBackgroundFetchPermission() async {
+  var status = await Permission.backgroundFetch.status;
+
+  if (status.isUndetermined) {
+    // Request permission
+    await Permission.backgroundFetch.request();
+  }
+
+  // Check if permission is granted
+  if (await Permission.backgroundFetch.isGranted) {
+    print('Background fetch permission granted');
+  } else {
+    print('Background fetch permission denied');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   alarmChannel.setMethodCallHandler((call) => alarmLaunchMethod(call));
@@ -29,6 +47,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AlarmBoxItemAdapter());
   await Hive.openBox<AlarmBoxItem>("alarmsBox");
+  await requestBackgroundFetchPermission();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Color(0xFFF5F5F5),
