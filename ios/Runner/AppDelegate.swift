@@ -36,8 +36,14 @@ import Flutter
         }
 
         GeneratedPluginRegistrant.register(with: self)
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
     }
+
+    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    // Your custom initialization code
+
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+}
 
 private func scheduleAlarm(delay: Int, message: String) {
     // Schedule local notification

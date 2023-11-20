@@ -19,23 +19,8 @@ Future<void> alarmLaunchMethod(MethodCall call) async {
   switch (call.method) {
     case 'onAlarmTriggered':
       Get.toNamed("/alarm-ring");
+      print("app was launch");
       break;
-  }
-}
-
-Future<void> requestBackgroundFetchPermission() async {
-  var status = await Permission.backgroundFetch.status;
-
-  if (status.isUndetermined) {
-    // Request permission
-    await Permission.backgroundFetch.request();
-  }
-
-  // Check if permission is granted
-  if (await Permission.backgroundFetch.isGranted) {
-    print('Background fetch permission granted');
-  } else {
-    print('Background fetch permission denied');
   }
 }
 
@@ -47,7 +32,6 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AlarmBoxItemAdapter());
   await Hive.openBox<AlarmBoxItem>("alarmsBox");
-  await requestBackgroundFetchPermission();
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Color(0xFFF5F5F5),
