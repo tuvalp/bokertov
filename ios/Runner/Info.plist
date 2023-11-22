@@ -54,5 +54,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We need your permission to send you notifications.</string>
+	<key>NSCriticalAlertsUsageDescription</key>
+	<string>We need your permission to send critical alerts for important information.</string>
+
 </dict>
 </plist>

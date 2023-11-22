@@ -11,15 +11,13 @@ import Flutter
         methodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: controller.binaryMessenger)
         print("IOS onCreate!!!");
 
-
-
         methodChannel?.setMethodCallHandler({ [weak self] (call, result) in
             if call.method == "scheduleAlarm" {
                 print("scheduleAlarm");
                 if let arguments = call.arguments as? [String: Any],
-                   let delay = arguments["delay"] as? Int,
+                   let time = arguments["time"] as? Int,
                    let message = arguments["message"] as? String {
-                    self?.scheduleAlarm(delay: delay, message: message)
+                    self?.scheduleAlarm(time: time, message: message)
                 }
             } else if call.method == "cancelAllAlarms" {
                 self?.cancelAllAlarms()
@@ -27,7 +25,7 @@ import Flutter
         })
 
         // Request notification permissions
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional, .criticalAlert]) { (granted, error) in
             if granted {
                 print("Notification permission granted")
             } else {
@@ -35,47 +33,37 @@ import Flutter
             }
         }
 
+
         GeneratedPluginRegistrant.register(with: self)
 
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    // Your custom initialization code
+    private func scheduleAlarm(time: Int, message: String) {
+        // Convert time to Date or use your own logic to determine the notification time
+        // For example, you can use DateComponents to specify hours and minutes
+        let date = Date()
 
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-}
+        let triggerDate = Calendar.current.date(byAdding: .second, value: time, to: date)!
 
-private func scheduleAlarm(delay: Int, message: String) {
-    // Schedule local notification
-    let content = UNMutableNotificationContent()
-    content.title = "Alarm"
-    content.body = message
+        // Create a content for the critical alert
+        let content = UNMutableNotificationContent()
+        content.title = "Critical Alert Title"
+        content.body = message
+        content.sound = UNNotificationSound.defaultCritical
 
-    // Create a unique identifier for the notification
-    let identifier = UUID().uuidString
+        // Create a trigger with a 5-second delay
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5.0, repeats: false)
 
-    // Set up the trigger for the notification
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(delay / 1000), repeats: false)
+        // Create a request with the content and trigger
+        let request = UNNotificationRequest(identifier: "criticalAlertIdentifier", content: content, trigger: trigger)
 
-    // Create the notification request
-    let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
-    // Add the request to the notification center
-    UNUserNotificationCenter.current().add(request) { (error) in
-        if let error = error {
-            print("Error scheduling notification: \(error.localizedDescription)")
-        } else {
-            print("Notification scheduled successfully with message: \(message)")
+        // Add the request to the notification center
+        UNUserNotificationCenter.current().add(request) { error in
+            // Handle any errors
         }
     }
-
-    // Log the scheduled alarm
-    print("Alarm scheduled with delay: \(delay) seconds and message: \(message)")
-
-    // Schedule background task to launch the app
-    UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-}
-
+    
 
     private func cancelAllAlarms() {
         // Cancel all scheduled notifications
