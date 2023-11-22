@@ -50,8 +50,11 @@ import Flutter
         content.sound = UNNotificationSound.defaultCritical
 
         // Create a trigger based on the scheduled date
-        let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        // let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        // let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(5), repeats: false)
+
 
         // Create a request with the content and trigger
         let request = UNNotificationRequest(identifier: "criticalAlertIdentifier", content: content, trigger: trigger)
