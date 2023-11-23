@@ -22,8 +22,24 @@ import Flutter
                 }
             } else if call.method == "cancelAllAlarms" {
                 self?.cancelAllAlarms()
+            } else if call.method == "handleNotificationAction" {
+                if let action = call.arguments as? String {
+                    self?.handleNotificationAction(action)
+                }
             }
         })
+
+        private func handleNotificationAction(_ action: String) {
+            if action == "action1" {
+                // Handle button 1 click
+                print("Button 1 clicked")
+                methodChannel?.invokeMethod("onButton1Click", arguments: nil)
+            } else if action == "action2" {
+                // Handle button 2 click
+                print("Button 2 clicked")
+                methodChannel?.invokeMethod("onButton2Click", arguments: nil)
+            }
+        }
 
         // Request notification permissions
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional, .criticalAlert]) { (granted, error) in
@@ -39,35 +55,44 @@ import Flutter
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    private func scheduleAlarm(time: Int, message: String) {
-        // Convert time to Date
-        let date = Date(timeIntervalSinceNow: TimeInterval(time))
+private func scheduleAlarm(time: Int, message: String) {
+    // Convert time to Date
+    let date = Date(timeIntervalSinceNow: TimeInterval(time))
 
-        // Create a content for the critical alert
-        let content = UNMutableNotificationContent()
-        content.title = "Critical Alert Title"
-        content.body = message
-        content.sound = UNNotificationSound.defaultCritical
+    // Create a content for the regular alert
+    let content = UNMutableNotificationContent()
+    content.title = "Notification Title"
+    content.body = message
+    content.sound = UNNotificationSound.default
 
-        // Create a trigger based on the scheduled date
-        // let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
-        // let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+    // Create actions for the two buttons
+    let action1 = UNNotificationAction(identifier: "action-stop", title: "Stop", options: [])
+    let action2 = UNNotificationAction(identifier: "action-snooz", title: "Snooz", options: [])
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(5), repeats: false)
+    // Create a category with the two actions
+    let category = UNNotificationCategory(identifier: "myCategory", actions: [action1, action2], intentIdentifiers: [], options: [])
 
+    // Register the category
+    UNUserNotificationCenter.current().setNotificationCategories([category])
 
-        // Create a request with the content and trigger
-        let request = UNNotificationRequest(identifier: "criticalAlertIdentifier", content: content, trigger: trigger)
+    content.categoryIdentifier = "myCategory"
 
-        // Add the request to the notification center
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling critical alert: \(error.localizedDescription)")
-            } else {
-                print("Critical alert scheduled successfully")
-            }
+    // Create a trigger based on the scheduled date
+    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(5), repeats: false)
+
+    // Create a request with the content and trigger
+    let request = UNNotificationRequest(identifier: "regularAlertIdentifier", content: content, trigger: trigger)
+
+    // Add the request to the notification center
+    UNUserNotificationCenter.current().add(request) { error in
+        if let error = error {
+            print("Error scheduling regular alert: \(error.localizedDescription)")
+        } else {
+            print("Regular alert scheduled successfully")
         }
     }
+}
+
 
     private func cancelAllAlarms() {
         // Cancel all scheduled notifications
