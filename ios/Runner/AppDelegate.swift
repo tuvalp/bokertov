@@ -29,18 +29,6 @@ import Flutter
             }
         })
 
-        private func handleNotificationAction(_ action: String) {
-            if action == "action1" {
-                // Handle button 1 click
-                print("Button 1 clicked")
-                methodChannel?.invokeMethod("onButton1Click", arguments: nil)
-            } else if action == "action2" {
-                // Handle button 2 click
-                print("Button 2 clicked")
-                methodChannel?.invokeMethod("onButton2Click", arguments: nil)
-            }
-        }
-
         // Request notification permissions
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional, .criticalAlert]) { (granted, error) in
             if granted {
@@ -54,6 +42,19 @@ import Flutter
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
+
+    private func handleNotificationAction(_ action: String) {
+        if action == "action-stop" {
+            // Handle "Stop" button click
+            print("Stop button clicked")
+            methodChannel?.invokeMethod("onStopButtonClick", arguments: nil)
+        } else if action == "action-snooz" {
+            // Handle "Snooze" button click
+            print("Snooze button clicked")
+            methodChannel?.invokeMethod("onSnoozeButtonClick", arguments: nil)
+        }
+    }
+
 
 private func scheduleAlarm(time: Int, message: String) {
     // Convert time to Date
