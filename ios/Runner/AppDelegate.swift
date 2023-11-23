@@ -58,7 +58,10 @@ import Flutter
 
 private func scheduleAlarm(time: Int, message: String) {
     // Convert time to Date
-    let date = Date(timeIntervalSinceNow: TimeInterval(time))
+    //let date = Date(timeIntervalSinceNow: TimeInterval(time/1000))
+    let date = Date(timeIntervalSinceNow: TimeInterval(5))
+
+
 
     // Create a content for the regular alert
     let content = UNMutableNotificationContent()
