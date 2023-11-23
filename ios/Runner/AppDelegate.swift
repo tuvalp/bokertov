@@ -67,7 +67,7 @@ private func scheduleAlarm(time: Int, message: String) {
     let content = UNMutableNotificationContent()
     content.title = "Notification Title"
     content.body = message
-    content.sound = UNNotificationSound.default
+    //content.sound = UNNotificationSound.default
 
     // Create actions for the two buttons
     let action1 = UNNotificationAction(identifier: "action-stop", title: "Stop", options: [])
@@ -85,7 +85,8 @@ private func scheduleAlarm(time: Int, message: String) {
     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(5), repeats: false)
 
     // Create a request with the content and trigger
-    let request = UNNotificationRequest(identifier: "regularAlertIdentifier", content: content, trigger: trigger)
+let uniqueIdentifier = "regularAlertIdentifier_\(Date().timeIntervalSince1970)"
+let request = UNNotificationRequest(identifier: uniqueIdentifier, content: content, trigger: trigger)
 
     // Add the request to the notification center
     UNUserNotificationCenter.current().add(request) { error in
