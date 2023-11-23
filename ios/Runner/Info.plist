@@ -60,5 +60,16 @@
 	<key>NSCriticalAlertsUsageDescription</key>
 	<string>We need your permission to send critical alerts for important information.</string>
 
+	<key>NSUserNotificationAlertStyle</key>
+	<string>alert</string>
+
+	<key>NSUserNotificationAlertStyle</key>
+	<string>alert</string>
+
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+
 </dict>
 </plist>
