@@ -29,8 +29,8 @@ import Flutter
             }
         })
 
-        // Request notification permissions
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional, .criticalAlert]) { (granted, error) in
+        // Request notification permission here
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
                 print("Notification permission granted")
             } else {
@@ -38,83 +38,36 @@ import Flutter
             }
         }
 
-        GeneratedPluginRegistrant.register(with: self)
-
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
-    private func handleNotificationAction(_ action: String) {
-        if action == "action-stop" {
-            // Handle "Stop" button click
-            print("Stop button clicked")
-            methodChannel?.invokeMethod("onStopButtonClick", arguments: nil)
-        } else if action == "action-snooz" {
-            // Handle "Snooze" button click
-            print("Snooze button clicked")
-            methodChannel?.invokeMethod("onSnoozeButtonClick", arguments: nil)
+    func scheduleAlarm(time: Int, message: String) {
+        // Convert milliseconds to seconds
+        let seconds = Double(time) / 1000.0
+
+        // Calculate the fire date by adding the specified time to the current date
+        let currentDate = Date()
+        let fireDate = currentDate.addingTimeInterval(seconds)
+
+        // Create a notification content
+        let content = UNMutableNotificationContent()
+        content.title = "Alarm"
+        content.body = message
+        content.sound = UNNotificationSound.default
+
+        // Create a notification trigger with the calculated fire date
+        let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
+
+        // Create a notification request
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+
+        // Add the request to the notification center
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled successfully!")
+            }
         }
-    }
-
-
-private func scheduleAlarm(time: Int, message: String) {
-    // Convert time to Date
-    //let date = Date(timeIntervalSinceNow: TimeInterval(time/1000))
-    let date = Date(timeIntervalSinceNow: TimeInterval(5))
-
-
-
-    // Create a content for the regular alert
-    let content = UNMutableNotificationContent()
-    content.title = "Notification Title"
-    content.body = message
-    //content.sound = UNNotificationSound.default
-
-    // Create actions for the two buttons
-    let action1 = UNNotificationAction(identifier: "action-stop", title: "Stop", options: [])
-    let action2 = UNNotificationAction(identifier: "action-snooz", title: "Snooz", options: [])
-
-    // Create a category with the two actions
-    let category = UNNotificationCategory(identifier: "myCategory", actions: [action1, action2], intentIdentifiers: [], options: [])
-
-    // Register the category
-    UNUserNotificationCenter.current().setNotificationCategories([category])
-
-    content.categoryIdentifier = "myCategory"
-
-    // Create a trigger based on the scheduled date
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(5), repeats: false)
-
-    // Create a request with the content and trigger
-let uniqueIdentifier = "regularAlertIdentifier_\(Date().timeIntervalSince1970)"
-let request = UNNotificationRequest(identifier: uniqueIdentifier, content: content, trigger: trigger)
-
-    // Add the request to the notification center
-    UNUserNotificationCenter.current().add(request) { error in
-        if let error = error {
-            print("Error scheduling regular alert: \(error.localizedDescription)")
-        } else {
-            print("Regular alert scheduled successfully")
-        }
-    }
-}
-
-
-    private func cancelAllAlarms() {
-        // Cancel all scheduled notifications
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-    }
-
-    override func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        // Handle background fetch, unlock the screen, and launch the app
-        print("Unlock screen and launch app method triggered")
-        unlockScreenAndLaunchApp()
-        completionHandler(.newData)
-    }
-
-    private func unlockScreenAndLaunchApp() {
-        // Unlocking the screen programmatically is not possible in iOS due to security restrictions.
-        // You can launch the app and navigate to a specific route using Flutter method channel.
-        methodChannel?.invokeMethod("onAlarmTriggered", arguments: nil)
-        print("Unlock screen and launch app method triggered")
     }
 }
