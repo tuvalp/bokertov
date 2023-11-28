@@ -16,7 +16,7 @@ import Flutter
             if call.method == "scheduleAlarm" {
                 print("scheduleAlarm")
                 if let arguments = call.arguments as? [String: Any],
-                   let time = arguments["time"] as? Int,
+                   let time = arguments["delay"] as? Int,
                    let message = arguments["message"] as? String {
                     self?.scheduleAlarm(time: time, message: message)
                 }
