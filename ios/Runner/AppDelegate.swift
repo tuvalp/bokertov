@@ -70,4 +70,9 @@ import Flutter
             }
         }
     }
+
+    func cancelAllAlarms() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        print("All alarms canceled successfully!")
+    }
 }
