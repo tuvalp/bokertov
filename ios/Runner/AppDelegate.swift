@@ -22,10 +22,6 @@ import Flutter
                 }
             } else if call.method == "cancelAllAlarms" {
                 self?.cancelAllAlarms()
-            } else if call.method == "handleNotificationAction" {
-                if let action = call.arguments as? String {
-                    self?.handleNotificationAction(action)
-                }
             }
         })
 
