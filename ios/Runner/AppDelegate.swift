@@ -9,7 +9,7 @@ import Flutter
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
-        
+
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         methodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: controller.binaryMessenger)
         print("IOS onCreate!!!")
@@ -38,6 +38,11 @@ import Flutter
 
         // Set the delegate to handle notification actions
         UNUserNotificationCenter.current().delegate = self
+
+        // Check if the app is launched due to a notification tap
+        if let notification = launchOptions?[.remoteNotification] as? [String: Any] {
+            handleNotificationTapped(notification)
+        }
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -83,35 +88,35 @@ import Flutter
     override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // Check the identifier to determine which action was selected
         let actionIdentifier = response.actionIdentifier
-        switch actionIdentifier {
-        case UNNotificationDefaultActionIdentifier:
-            // Handle the default action (notification tapped)
-            print("Notification tapped")
 
-            // Check if the app is in the foreground or background
-            if UIApplication.shared.applicationState == .active {
-                // App is in the foreground
-                print("App is in the foreground")
+        // Check if the app is in the foreground or background
+        if UIApplication.shared.applicationState == .active {
+            // App is in the foreground
+            print("App is in the foreground")
 
-                // Invoke a method directly in Flutter when the notification is received
-                self.methodChannel?.invokeMethod("onAlarmReceived", arguments: [])
-            } else {
-                // App is in the background or not running
-                print("App is in the background or not running")
+            // Invoke a method directly in Flutter when the notification is received
+            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+        } else {
+            // App is in the background or not running
+            print("App is in the background or not running")
 
-                // Launch the app and send a method call when the notification is tapped
-                let flutterViewController = FlutterViewController()
+            // Launch the app and send a method call when the notification is tapped
+            let flutterViewController = FlutterViewController()
+            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
 
-                self.methodChannel?.invokeMethod("onAlarmReceived", arguments: [])
-
-                window?.rootViewController = flutterViewController
-                window?.makeKeyAndVisible()
-            }
-        default:
-            break
+            window?.rootViewController = flutterViewController
+            window?.makeKeyAndVisible()
         }
 
         // Call the completion handler
         completionHandler()
+    }
+
+    // Handle the case when the app is launched due to a notification tap
+    func handleNotificationTapped(_ notification: [String: Any]) {
+        // Extract information from the notification and invoke Flutter method
+        if let message = notification["message"] as? String {
+            methodChannel?.invokeMethod("onAlarmReceived", arguments: ["message": message])
+        }
     }
 }
