@@ -89,23 +89,24 @@ import Flutter
     // MARK: - UNUserNotificationCenterDelegate
 
     // Handle tapped notifications
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Check the identifier to determine which action was selected
-        let actionIdentifier = response.actionIdentifier
-        switch actionIdentifier {
-        case UNNotificationDefaultActionIdentifier:
-            // Handle the default action (notification tapped)
-            print("Notification tapped")
-            // Add your custom handling here
-        case "CustomActionIdentifier":
-            // Handle your custom action
-            print("Custom action tapped")
-            // Add your custom handling here
-        default:
-            break
-        }
-
-        // Call the completion handler
-        completionHandler()
+func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    // Check the identifier to determine which action was selected
+    let actionIdentifier = response.actionIdentifier
+    switch actionIdentifier {
+    case UNNotificationDefaultActionIdentifier:
+        // Handle the default action (notification tapped)
+        print("Notification tapped")
+        // Add your custom handling here
+    case "CustomActionIdentifier":
+        // Handle your custom action
+        print("Custom action tapped")
+        // Add your custom handling here
+    default:
+        break
     }
+
+    // Call the completion handler
+    completionHandler()
+}
+
 }
