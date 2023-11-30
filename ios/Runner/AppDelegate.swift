@@ -102,9 +102,8 @@ override func userNotificationCenter(_ center: UNUserNotificationCenter, didRece
 
             // Launch the app and send a method call when the notification is tapped
             let flutterViewController = FlutterViewController()
-            let flutterMethodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: flutterViewController.binaryMessenger)
             
-            flutterMethodChannel.invokeMethod("onAlarmReceived", arguments: nil)
+            MethodChannel.invokeMethod("onAlarmReceived", arguments: nil)
 
             window?.rootViewController = flutterViewController
             window?.makeKeyAndVisible()
