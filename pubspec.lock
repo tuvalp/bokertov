@@ -206,14 +206,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_ios_ringtone_player:
-    dependency: "direct main"
-    description:
-      name: flutter_ios_ringtone_player
-      sha256: fd29b51289e8a733ab2e3a795728414a843c0193386e85d7b0395e6a624482b6
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4"
   flutter_lints:
     dependency: "direct dev"
     description:

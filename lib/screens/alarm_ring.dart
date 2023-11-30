@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:flutter_ios_ringtone_player/flutter_ios_ringtone_player.dart';
 
 import '../services/alarm_box.dart';
 
@@ -41,19 +40,19 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
       asAlarm: true,
     );
 
-    FlutterIosRingtonePlayer.play(soundId: 1005);
+    //FlutterIosRingtonePlayer.play(soundId: 1005);
   }
 
   void onStopButtonClick() {
     AlarmBoxService().setAlarms();
     FlutterRingtonePlayer.stop();
-    FlutterIosRingtonePlayer.stop(soundId: 1005);
+    //FlutterIosRingtonePlayer.stop(soundId: 1005);
     Get.toNamed("/");
   }
 
   void onSnozButtonClick() {
     AlarmBoxService().setSnooz();
-    FlutterRingtonePlayer.stop();
+    //FlutterRingtonePlayer.stop();
     Get.toNamed("/");
   }
 
