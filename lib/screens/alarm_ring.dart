@@ -47,6 +47,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
   void onStopButtonClick() {
     AlarmBoxService().setAlarms();
     FlutterRingtonePlayer.stop();
+    FlutterIosRingtonePlayer.stop(soundId: 1005);
     Get.toNamed("/");
   }
 
