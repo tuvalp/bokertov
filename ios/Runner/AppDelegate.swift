@@ -89,7 +89,7 @@ import Flutter
     // MARK: - UNUserNotificationCenterDelegate
 
     // Handle tapped notifications
-func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
     // Check the identifier to determine which action was selected
     let actionIdentifier = response.actionIdentifier
     switch actionIdentifier {
