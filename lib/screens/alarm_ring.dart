@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:flutter_ios_ringtone_player/flutter_ios_ringtone_player.dart';
 
 import '../services/alarm_box.dart';
 
@@ -24,7 +25,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
     ringtonePlay();
     channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'onAlarmTriggered') {
-        message = call.arguments.toString() ?? "";
+        message = call.arguments.toString();
         print('Received alarm message: $message');
       }
     });
@@ -39,6 +40,8 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
       volume: 1,
       asAlarm: true,
     );
+
+    FlutterIosRingtonePlayer.play(soundId: 1005);
   }
 
   void onStopButtonClick() {

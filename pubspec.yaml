@@ -16,6 +16,7 @@ dependencies:
   flutter_ringtone_player: ^3.2.0
   flutter_time_picker_spinner: ^2.0.0
   http: ^0.13.3
+  flutter_ios_ringtone_player: ^0.0.4
 
 dev_dependencies:
   flutter_test:
