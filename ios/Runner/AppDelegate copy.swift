@@ -3,7 +3,7 @@ import UserNotifications
 import Flutter
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, UNUserNotificationCenterDelegate {
+@objc class AppDelegate: FlutterAppDelegate {
 
     var methodChannel: FlutterMethodChannel?
 
@@ -36,9 +36,6 @@ import Flutter
             }
         }
 
-        // Set the delegate to handle notification actions
-        UNUserNotificationCenter.current().delegate = self
-
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -55,15 +52,6 @@ import Flutter
         content.title = "Alarm"
         content.body = message
         content.sound = UNNotificationSound.default
-
-        // Create a custom action
-        let customAction = UNNotificationAction(identifier: "CustomActionIdentifier", title: "Custom Action", options: [])
-        // Create a category with the custom action
-        let category = UNNotificationCategory(identifier: "CustomCategoryIdentifier", actions: [customAction], intentIdentifiers: [], options: [])
-        // Register the category with the notification center
-        UNUserNotificationCenter.current().setNotificationCategories([category])
-        // Associate the category with the notification content
-        content.categoryIdentifier = "CustomCategoryIdentifier"
 
         // Create a notification trigger with the calculated fire date
         let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
@@ -84,28 +72,5 @@ import Flutter
     func cancelAllAlarms() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("All alarms canceled successfully!")
-    }
-
-    // MARK: - UNUserNotificationCenterDelegate
-
-    // Handle tapped notifications
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Check the identifier to determine which action was selected
-        let actionIdentifier = response.actionIdentifier
-        switch actionIdentifier {
-        case UNNotificationDefaultActionIdentifier:
-            // Handle the default action (notification tapped)
-            print("Notification tapped")
-            // Add your custom handling here
-        case "CustomActionIdentifier":
-            // Handle your custom action
-            print("Custom action tapped")
-            // Add your custom handling here
-        default:
-            break
-        }
-
-        // Call the completion handler
-        completionHandler()
     }
 }
