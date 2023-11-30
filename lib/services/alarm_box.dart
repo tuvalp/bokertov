@@ -2,6 +2,9 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import './alarm_box_item.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 const MethodChannel alarmChannel = MethodChannel('com.example.bokertov');
 
@@ -43,6 +46,7 @@ class AlarmBoxService {
       for (var index = 0; index < alarmBox.length; index++) {
         var alarm = alarmBox.getAt(index);
         if (alarm != null && alarm.isActive == true) {
+          setAlarm(alarm.time);
           var milliseconds = getMillisecondsToAlarm(DateTime.now(), alarm.time);
           timeList
               .add({"time": milliseconds, "id": alarm.id, "note": alarm.note});
@@ -58,6 +62,39 @@ class AlarmBoxService {
           print("Error scheduling alarm: $e");
         }
       }
+    }
+  }
+
+  Future<void> setAlarm(alarm) async {
+    final String url = "http://13.48.247.51:3250/setAlarm";
+    final Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
+    var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    var alarm_string = formatter.format(alarm);
+
+    final Map<String, dynamic> body = {
+      "user_id": "noam",
+      "time": alarm_string,
+    };
+
+    final String jsonBody = jsonEncode(body);
+
+    try {
+      final http.Response response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200) {
+        print("Request successful");
+      } else {
+        print("Request failed with status: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error: $e");
     }
   }
 
