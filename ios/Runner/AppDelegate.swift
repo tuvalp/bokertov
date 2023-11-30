@@ -56,7 +56,6 @@ import Flutter
         content.body = message
         content.sound = UNNotificationSound.default
 
-
         // Create a notification trigger with the calculated fire date
         let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
 
@@ -81,40 +80,38 @@ import Flutter
     // MARK: - UNUserNotificationCenterDelegate
 
     // Handle tapped notifications
-override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-    // Check the identifier to determine which action was selected
-    let actionIdentifier = response.actionIdentifier
-    switch actionIdentifier {
-    case UNNotificationDefaultActionIdentifier:
-        // Handle the default action (notification tapped)
-        print("Notification tapped")
+    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Check the identifier to determine which action was selected
+        let actionIdentifier = response.actionIdentifier
+        switch actionIdentifier {
+        case UNNotificationDefaultActionIdentifier:
+            // Handle the default action (notification tapped)
+            print("Notification tapped")
 
-        // Check if the app is in the foreground or background
-        if UIApplication.shared.applicationState == .active {
-            // App is in the foreground
-            print("App is in the foreground")
+            // Check if the app is in the foreground or background
+            if UIApplication.shared.applicationState == .active {
+                // App is in the foreground
+                print("App is in the foreground")
 
-            // Invoke a method directly in Flutter when the notification is received
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
-        } else {
-            // App is in the background or not running
-            print("App is in the background or not running")
+                // Invoke a method directly in Flutter when the notification is received
+                self.methodChannel?.invokeMethod("onAlarmReceived", arguments: [])
+            } else {
+                // App is in the background or not running
+                print("App is in the background or not running")
 
-            // Launch the app and send a method call when the notification is tapped
-            let flutterViewController = FlutterViewController()
-            
-            MethodChannel.invokeMethod("onAlarmReceived", arguments: nil)
+                // Launch the app and send a method call when the notification is tapped
+                let flutterViewController = FlutterViewController()
 
-            window?.rootViewController = flutterViewController
-            window?.makeKeyAndVisible()
+                self.methodChannel?.invokeMethod("onAlarmReceived", arguments: [])
+
+                window?.rootViewController = flutterViewController
+                window?.makeKeyAndVisible()
+            }
+        default:
+            break
         }
-    default:
-        break
+
+        // Call the completion handler
+        completionHandler()
     }
-
-    // Call the completion handler
-    completionHandler()
-}
-
-
 }
