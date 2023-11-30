@@ -96,6 +96,8 @@ override func userNotificationCenter(_ center: UNUserNotificationCenter, didRece
     case UNNotificationDefaultActionIdentifier:
         // Handle the default action (notification tapped)
         print("Notification tapped")
+        methodChannel?.invokeMethod("onAlarmTriggered", arguments: nil)
+
         // Add your custom handling here
     case "CustomActionIdentifier":
         // Handle your custom action
