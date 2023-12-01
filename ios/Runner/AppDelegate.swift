@@ -102,10 +102,11 @@ import Flutter
 
             // Launch the app and send a method call when the notification is tapped
             let flutterViewController = FlutterViewController()
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
 
             window?.rootViewController = flutterViewController
             window?.makeKeyAndVisible()
+            
+            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
         }
 
         // Call the completion handler
@@ -114,9 +115,6 @@ import Flutter
 
     // Handle the case when the app is launched due to a notification tap
     func handleNotificationTapped(_ notification: [String: Any]) {
-        // Extract information from the notification and invoke Flutter method
-        if let message = notification["message"] as? String {
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: ["message": message])
-        }
+        methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
     }
 }
