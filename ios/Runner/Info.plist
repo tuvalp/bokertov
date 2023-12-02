@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>io.flutter.embedded_app_name</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>NSUserNotificationEnabled</key>
@@ -10,7 +15,7 @@
 	<string>$(PRODUCT_MODULE_NAME).AppDelegate</string>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>fetch</string>
+	<string>fetch</string>
 	</array>
 	<key>com.apple.developer.usernotifications.critical-alerts</key>
 	<true/>

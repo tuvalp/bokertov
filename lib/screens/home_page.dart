@@ -27,7 +27,6 @@ class HomeScreen extends StatelessWidget {
         child: const Icon(Icons.alarm_add),
       );
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -36,7 +35,6 @@ class HomeScreen extends StatelessWidget {
         floatingActionButton: addAlarmButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             height: 60.0,

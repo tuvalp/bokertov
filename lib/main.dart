@@ -48,8 +48,22 @@ class AlarmClock extends StatelessWidget {
       title: 'Alarm',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.lightBlue,
+          shape: CircleBorder(),
+        ),
+        switchTheme: const SwitchThemeData(
+            overlayColor: MaterialStatePropertyAll(Colors.blue)),
+        bottomAppBarTheme: const BottomAppBarTheme(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: CircularNotchedRectangle(),
+        ),
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
         primaryColor: Colors.blue,
+        buttonTheme: const ButtonThemeData(buttonColor: Colors.blue),
+        bottomSheetTheme:
+            const BottomSheetThemeData(backgroundColor: Colors.white),
       ),
       routes: {
         "/": (context) => const HomeScreen(),
