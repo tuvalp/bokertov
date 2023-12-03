@@ -88,27 +88,25 @@ import Flutter
         let actionIdentifier = response.actionIdentifier
 
         // Check if the app is in the foreground or background
-        if UIApplication.shared.applicationState == .active {
-            // App is in the foreground
-            print("App is in the foreground")
+ if UIApplication.shared.applicationState == .active {
+        // App is in the foreground
+        print("App is in the foreground")
+        methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+    } else {
+        // App is in the background or not running
+        print("App is in the background or not running")
 
-            // Invoke a method directly in Flutter when the notification is received
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
-        } else {
-            // App is in the background or not running
-            print("App is in the background or not running")
+        let flutterViewController = FlutterViewController()
 
-            // Launch the app and send a method call when the notification is tapped
-            let flutterViewController = FlutterViewController()
+        // Initialize Flutter only once
+        GeneratedPluginRegistrant.register(with: flutterViewController)
 
-            // Initialize Flutter only once
-            GeneratedPluginRegistrant.register(with: flutterViewController)
+        window?.rootViewController = flutterViewController
+        window?.makeKeyAndVisible()
 
-            window?.rootViewController = flutterViewController
-            window?.makeKeyAndVisible()
-
-            // Listen for Flutter engine creation completion
-            NotificationCenter.default.addObserver(forName: NSNotification.Name.UIWindowDidBecomeVisible, object: window, queue: nil) { _ in
+        // Listen for Flutter engine creation completion
+        if #available(iOS 13.0, *) {
+            NotificationCenter.default.addObserver(forName: UIWindow.didBecomeVisibleNotification, object: window, queue: nil) { _ in
                 // Invoke the method once Flutter is ready
                 self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
                     if let error = result as? FlutterError {
@@ -116,7 +114,11 @@ import Flutter
                     }
                 })
             }
+        } else {
+            // Fallback on earlier versions if needed
         }
+    }
+
 
         // Call the completion handler
         completionHandler()
