@@ -93,31 +93,30 @@ import Flutter
             print("App is in the foreground")
 
             // Invoke a method directly in Flutter when the notification is received
-            self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
         } else {
             // App is in the background or not running
             print("App is in the background or not running")
 
             // Launch the app and send a method call when the notification is tapped
-        let flutterViewController = FlutterViewController()
+            let flutterViewController = FlutterViewController()
 
-        // Initialize Flutter only once
-        GeneratedPluginRegistrant.register(with: flutterViewController)
+            // Initialize Flutter only once
+            GeneratedPluginRegistrant.register(with: flutterViewController)
 
-        window?.rootViewController = flutterViewController
-        window?.makeKeyAndVisible()
+            window?.rootViewController = flutterViewController
+            window?.makeKeyAndVisible()
 
-        // Delay the method invocation to ensure Flutter is initialized
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIWindowDidBecomeVisible, object: window, queue: nil) { _ in
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
-                if let error = result as? FlutterError {
-                    print("Error invoking method: \(error)")
-                }
-            })
+            // Listen for Flutter engine creation completion
+            NotificationCenter.default.addObserver(forName: NSNotification.Name.UIWindowDidBecomeVisible, object: window, queue: nil) { _ in
+                // Invoke the method once Flutter is ready
+                self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
+                    if let error = result as? FlutterError {
+                        print("Error invoking method: \(error)")
+                    }
+                })
+            }
         }
-        
 
         // Call the completion handler
         completionHandler()
