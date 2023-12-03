@@ -93,7 +93,7 @@ import Flutter
             print("App is in the foreground")
 
             // Invoke a method directly in Flutter when the notification is received
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+            self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
         } else {
             // App is in the background or not running
             print("App is in the background or not running")
@@ -108,6 +108,8 @@ import Flutter
         window?.makeKeyAndVisible()
 
         // Delay the method invocation to ensure Flutter is initialized
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIWindowDidBecomeVisible, object: window, queue: nil) { _ in
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
                 if let error = result as? FlutterError {
