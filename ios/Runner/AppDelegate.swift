@@ -99,12 +99,22 @@ import Flutter
             print("App is in the background or not running")
 
             // Launch the app and send a method call when the notification is tapped
-            let flutterViewController = FlutterViewController()
+        let flutterViewController = FlutterViewController()
 
-            window?.rootViewController = flutterViewController
-            window?.makeKeyAndVisible()
-            
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+        // Initialize Flutter only once
+        GeneratedPluginRegistrant.register(with: flutterViewController)
+
+        window?.rootViewController = flutterViewController
+        window?.makeKeyAndVisible()
+
+        // Delay the method invocation to ensure Flutter is initialized
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
+                if let error = result as? FlutterError {
+                    print("Error invoking method: \(error)")
+                }
+            })
+        }
         }
 
         // Call the completion handler
