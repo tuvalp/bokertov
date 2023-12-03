@@ -40,9 +40,9 @@ import Flutter
         UNUserNotificationCenter.current().delegate = self
 
         // Check if the app is launched due to a notification tap
-        if let notification = launchOptions?[.remoteNotification] as? [String: Any] {
-            handleNotificationTapped(notification)
-        }
+        // if let notification = launchOptions?[.remoteNotification] as? [String: Any] {
+        //     handleNotificationTapped(notification)
+        // }
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
