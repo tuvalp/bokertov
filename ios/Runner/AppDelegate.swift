@@ -3,7 +3,7 @@ import UserNotifications
 import Flutter
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, UNUserNotificationCenterDelegate {
 
     var methodChannel: FlutterMethodChannel?
 
@@ -36,12 +36,8 @@ import Flutter
             }
         }
 
-        // Set the delegate to handle notification actions
+        // Set the delegate to receive notification callbacks
         UNUserNotificationCenter.current().delegate = self
-
-        if let notification = launchOptions?[.remoteNotification] as? [String: Any] {
-            handleNotificationTapped(notification)
-        }
 
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -81,56 +77,17 @@ import Flutter
         print("All alarms canceled successfully!")
     }
 
-    // MARK: - UNUserNotificationCenterDelegate
+    // Handle tapped notification
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Identify the notification that was tapped
+        let notification = response.notification
 
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Check the identifier to determine which action was selected
-        let actionIdentifier = response.actionIdentifier
-
-        // Check if the app is in the foreground or background
- if UIApplication.shared.applicationState == .active {
-        // App is in the foreground
-        print("App is in the foreground")
         methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
-       } else {
-        // App is in the background or not running
-        print("App is in the background or not running")
+        print("Tapped on the notification body")
 
-        // Initialize Flutter only once
-        if methodChannel == nil {
-            let flutterViewController = FlutterViewController()
-            methodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: flutterViewController.binaryMessenger)
-            GeneratedPluginRegistrant.register(with: flutterViewController)
-
-            window?.rootViewController = flutterViewController
-            window?.makeKeyAndVisible()
-
-            // Listen for Flutter engine creation completion
-            if #available(iOS 13.0, *) {
-                NotificationCenter.default.addObserver(forName: UIWindow.didBecomeVisibleNotification, object: window, queue: nil) { _ in
-                    // Invoke the method once Flutter is ready
-                    self.methodChannel?.invokeMethod("onAlarmReceived", arguments: nil, result: { (result) in
-                        if let error = result as? FlutterError {
-                            print("Error invoking method: \(error)")
-                        }
-                    })
-                }
-            } else {
-                // Fallback on earlier versions if needed
-            }
-        } else {
-            // Flutter is already initialized
-            methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
-        }
-    }
-
-
-        // Call the completion handler
+        // Call the completion handler to indicate that you have finished processing the user's action
         completionHandler()
     }
-
-    // Handle the case when the app is launched due to a notification tap
-    func handleNotificationTapped(_ notification: [String: Any]) {
-        methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
-    }
 }
+
+
