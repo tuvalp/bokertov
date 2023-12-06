@@ -56,7 +56,7 @@ import AVFoundation
         let content = UNMutableNotificationContent()
         content.title = "Alarm"
         content.body = message
-        content.sound = AudioServicesPlaySystemSound(1005)
+        content.sound = UNNotificationSound.defaultCritical
 
         // Create a notification trigger with the calculated fire date
         let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
