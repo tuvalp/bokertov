@@ -52,7 +52,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
 
   void onSnozButtonClick() {
     AlarmBoxService().setSnooz();
-    //FlutterRingtonePlayer.stop();
+    FlutterRingtonePlayer.stop();
     Get.toNamed("/");
   }
 
