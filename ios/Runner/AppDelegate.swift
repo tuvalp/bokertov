@@ -1,6 +1,8 @@
 import UIKit
 import UserNotifications
 import Flutter
+import AVFoundation
+
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -54,7 +56,7 @@ import Flutter
         let content = UNMutableNotificationContent()
         content.title = "Alarm"
         content.body = message
-        content.sound = UNNotificationSound.default
+        content.sound = AudioServicesPlaySystemSound(1005)
 
         // Create a notification trigger with the calculated fire date
         let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
