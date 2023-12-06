@@ -82,7 +82,7 @@ import Flutter
         // Identify the notification that was tapped
         let notification = response.notification
 
-        methodChannel?.invokeMethod("onAlarmReceived", arguments: nil)
+        methodChannel?.invokeMethod("onAlarmTriggered", arguments: nil)
         print("Tapped on the notification body")
 
         // Call the completion handler to indicate that you have finished processing the user's action

@@ -34,7 +34,7 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
   void ringtonePlay() {
     FlutterRingtonePlayer.play(
       android: AndroidSounds.alarm,
-      ios: IosSounds.alarm,
+      ios: const IosSound(1005),
       looping: true,
       volume: 1,
       asAlarm: true,
