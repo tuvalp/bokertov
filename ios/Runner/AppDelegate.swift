@@ -3,7 +3,7 @@ import UserNotifications
 import Flutter
 
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, UNUserNotificationCenterDelegate {
+@objc class AppDelegate: FlutterAppDelegate {
 
     var methodChannel: FlutterMethodChannel?
 
@@ -89,5 +89,3 @@ import Flutter
         completionHandler()
     }
 }
-
-

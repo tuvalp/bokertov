@@ -54,6 +54,7 @@ class AlarmBoxService {
       }
 
       timeList.sort((a, b) => a['time'].compareTo(b['time']));
+      print(timeList);
 
       if (timeList.isNotEmpty) {
         try {
