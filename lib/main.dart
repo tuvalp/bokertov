@@ -10,6 +10,7 @@ import '../screens/alarm_ring.dart';
 
 // Service
 import './services/alarm_box_item.dart';
+import './services/google_service.dart';
 
 const MethodChannel alarmChannel = MethodChannel('com.example.bokertov');
 
@@ -35,6 +36,9 @@ void main() async {
     statusBarColor: Color(0xFFF5F5F5),
     statusBarIconBrightness: Brightness.dark,
   ));
+
+  // Initializing Google service
+  GoogleService().handleSignIn();
 
   runApp(const AlarmClock());
 }
