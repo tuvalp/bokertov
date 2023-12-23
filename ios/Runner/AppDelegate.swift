@@ -1,8 +1,6 @@
 import UIKit
 import UserNotifications
 import Flutter
-import AVFoundation
-
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -11,7 +9,7 @@ import AVFoundation
 
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
-
+        
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         methodChannel = FlutterMethodChannel(name: "com.example.bokertov", binaryMessenger: controller.binaryMessenger)
         print("IOS onCreate!!!")
@@ -38,9 +36,6 @@ import AVFoundation
             }
         }
 
-        // Set the delegate to receive notification callbacks
-        UNUserNotificationCenter.current().delegate = self
-
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -56,7 +51,7 @@ import AVFoundation
         let content = UNMutableNotificationContent()
         content.title = "Alarm"
         content.body = message
-        content.sound = UNNotificationSound.defaultCritical
+        content.sound = UNNotificationSound.default
 
         // Create a notification trigger with the calculated fire date
         let trigger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate), repeats: false)
@@ -77,17 +72,5 @@ import AVFoundation
     func cancelAllAlarms() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         print("All alarms canceled successfully!")
-    }
-
-    // Handle tapped notification
-    override func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Identify the notification that was tapped
-        let notification = response.notification
-
-        methodChannel?.invokeMethod("onAlarmTriggered", arguments: nil)
-        print("Tapped on the notification body")
-
-        // Call the completion handler to indicate that you have finished processing the user's action
-        completionHandler()
-    }
+    }
 }

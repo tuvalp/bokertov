@@ -17,7 +17,9 @@ dependencies:
   flutter_time_picker_spinner: ^2.0.0
   http: ^0.13.3
   flutter_ios_ringtone_player: ^0.0.4
-  google_sign_in: ^6.2.0
+  googleapis: ^5.0.0
+  googleapis_auth: ^1.4.1
+  google_sign_in: ^5.0.3
 
 dev_dependencies:
   flutter_test:

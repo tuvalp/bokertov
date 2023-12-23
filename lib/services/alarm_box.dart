@@ -67,7 +67,7 @@ class AlarmBoxService {
   }
 
   Future<void> setAlarm(alarm) async {
-    final String url = "http://13.48.247.51:3250/setAlarm";
+    final String url = "http://16.171.135.77:3250/setAlarm";
     final Map<String, String> headers = {
       "Content-Type": "application/json",
     };

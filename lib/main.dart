@@ -31,6 +31,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AlarmBoxItemAdapter());
   await Hive.openBox<AlarmBoxItem>("alarmsBox");
+  await Hive.openBox("account");
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Color(0xFFF5F5F5),
@@ -39,6 +40,7 @@ void main() async {
 
   // Initializing Google service
   GoogleService().handleSignIn();
+  //await GoogleService().getHeartRateData();
 
   runApp(const AlarmClock());
 }
