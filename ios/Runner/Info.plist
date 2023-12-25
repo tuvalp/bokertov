@@ -2,22 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>io.flutter.embedded_app_name</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>NSUserNotificationEnabled</key>
-	<true/>
-	<key>UNUserNotificationCenterDelegate</key>
-	<string>$(PRODUCT_MODULE_NAME).AppDelegate</string>
-	<key>UIBackgroundModes</key>
-	<array>
-	<string>fetch</string>
-	</array>
-	<key>com.apple.developer.usernotifications.critical-alerts</key>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -37,10 +22,40 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>GIDClientID</key>
+	<string>213523678195-s69b8n5up0ccursinl6s2g9t3l6r7fb4.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>com.googleusercontent.apps.213523678195-s69b8n5up0ccursinl6s2g9t3l6r7fb4</string>
+		</array>
+	</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCriticalAlertsUsageDescription</key>
+	<string>We need your permission to send critical alerts for important information.</string>
+	<key>NSUserNotificationAlertStyle</key>
+	<string>alert</string>
+	<key>NSUserNotificationEnabled</key>
+	<true/>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We need your permission to send you notifications.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -58,25 +73,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<key>UNUserNotificationCenterDelegate</key>
+	<string>$(PRODUCT_MODULE_NAME).AppDelegate</string>
+	<key>com.apple.developer.usernotifications.critical-alerts</key>
 	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSUserNotificationUsageDescription</key>
-	<string>We need your permission to send you notifications.</string>
-	<key>NSCriticalAlertsUsageDescription</key>
-	<string>We need your permission to send critical alerts for important information.</string>
-
-	<key>NSUserNotificationAlertStyle</key>
-	<string>alert</string>
-
-	<key>NSUserNotificationAlertStyle</key>
-	<string>alert</string>
-
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-	</array>
-
+	<key>io.flutter.embedded_app_name</key>
+	<string>$(PRODUCT_NAME)</string>
 </dict>
 </plist>
