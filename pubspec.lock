@@ -324,10 +324,10 @@ packages:
     dependency: "direct main"
     description:
       name: googleapis
-      sha256: bfc58deceaec0a8683383ae82786d7392915f43404fffe7efff466e8f2d2ef71
+      sha256: "8a8c311723162af077ca73f94b823b97ff68770d966e29614d20baca9fdb490a"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "12.0.0"
   googleapis_auth:
     dependency: "direct main"
     description:

@@ -1,3 +1,4 @@
+import 'package:bokertov/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,6 +12,7 @@ import '../screens/alarm_ring.dart';
 // Service
 import './services/alarm_box_item.dart';
 import './services/google_service.dart';
+import './services/account_box_item.dart';
 
 const MethodChannel alarmChannel = MethodChannel('com.example.bokertov');
 
@@ -18,7 +20,6 @@ Future<void> alarmLaunchMethod(MethodCall call) async {
   switch (call.method) {
     case 'onAlarmTriggered':
       Get.toNamed("/alarm-ring");
-      print("app was launch");
       break;
   }
 }
@@ -30,8 +31,9 @@ void main() async {
   // Iintilzaing Hive
   await Hive.initFlutter();
   Hive.registerAdapter(AlarmBoxItemAdapter());
+  Hive.registerAdapter(GoogleSignInAccountAdapter());
   await Hive.openBox<AlarmBoxItem>("alarmsBox");
-  await Hive.openBox("account");
+  await Hive.openBox<GoogleSignInAccountitem>("account");
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Color(0xFFF5F5F5),
@@ -39,8 +41,7 @@ void main() async {
   ));
 
   // Initializing Google service
-  GoogleService().handleSignIn();
-  //await GoogleService().getHeartRateData();
+  await GoogleService().handleSignIn();
 
   runApp(const AlarmClock());
 }
@@ -53,27 +54,11 @@ class AlarmClock extends StatelessWidget {
     return GetMaterialApp(
       title: 'Alarm',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.lightBlue,
-          shape: CircleBorder(),
-        ),
-        switchTheme: const SwitchThemeData(
-            overlayColor: MaterialStatePropertyAll(Colors.blue)),
-        bottomAppBarTheme: const BottomAppBarTheme(
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: CircularNotchedRectangle(),
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-        primaryColor: Colors.blue,
-        buttonTheme: const ButtonThemeData(buttonColor: Colors.blue),
-        bottomSheetTheme:
-            const BottomSheetThemeData(backgroundColor: Colors.white),
-      ),
+      theme: ThemeData.light(useMaterial3: false),
       routes: {
         "/": (context) => const HomeScreen(),
         "/alarm-ring": (context) => const AlarmRingScreen(),
+        "/settings": (context) => SettingScreen(),
       },
     );
   }
