@@ -20,6 +20,7 @@ dependencies:
   googleapis: ^12.0.0
   googleapis_auth: ^1.4.1
   google_sign_in: ^5.0.3
+  health: ^8.1.0
 
 dev_dependencies:
   flutter_test:

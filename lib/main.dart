@@ -14,6 +14,9 @@ import './services/alarm_box_item.dart';
 import './services/google_service.dart';
 import './services/account_box_item.dart';
 
+// Test
+import './health.dart';
+
 const MethodChannel alarmChannel = MethodChannel('com.example.bokertov');
 
 Future<void> alarmLaunchMethod(MethodCall call) async {
@@ -27,6 +30,9 @@ Future<void> alarmLaunchMethod(MethodCall call) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   alarmChannel.setMethodCallHandler((call) => alarmLaunchMethod(call));
+
+  // Initializing Health
+  Health().init();
 
   // Iintilzaing Hive
   await Hive.initFlutter();
